@@ -1,0 +1,76 @@
+name: titanicprocessing
+version: 1.0.1
+kind: ecu
+
+dependencies:
+  - python3
+  - python3-pip
+  - python3-yaml
+
+install:
+  - pip3 install -r ./requirements.txt
+
+files:
+  - main.py
+  - requirements.txt
+  - test.csv
+  - train.csv
+
+entrypoint:
+  kind: task
+  exec: main.py
+
+actions:
+  'drop_unuseful_columns':
+    command:
+      args:
+        - drop_unuseful_columns
+    input:
+      - type: string
+        name: train_file
+
+      - type: string
+        name: test_file
+
+      - type: string[]
+        name: unuseful_columns
+    output:
+      - type: string[]
+        name: output
+
+  'transform_fields':
+    command:
+      args:
+        - transform_fields
+    input:
+      - type: string
+        name: train_file
+
+      - type: string
+        name: test_file
+
+      - type: string[]
+        name: fields_to_transform
+    output:
+      - type: string[]
+        name: output
+
+  'train_and_predict':
+    command:
+      args:
+        - train_and_predict
+    input:
+      - type: string
+        name: train_file
+
+      - type: string
+        name: test_file
+
+      - type: string
+        name: field_to_predict
+
+      - type: string[]
+        name: fields_to_use
+    output:
+      - type: real
+        name: output

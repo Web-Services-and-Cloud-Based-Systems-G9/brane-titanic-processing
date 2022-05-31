@@ -1,0 +1,21 @@
+[[source]]
+url = "https://pypi.org/simple"
+verify_ssl = true
+name = "pypi"
+
+[packages]
+pandas = "~=1.4.2"
+numpy = "~=1.22.4"
+scikit-learn = "~=1.1.1"
+matplotlib = "~=3.5.2"
+seaborn = "~=0.11.2"
+pytest = "~=7.1.2"
+PyYAML = "~=6.0"
+
+[dev-packages]
+
+[requires]
+python_version = "3.8"
+
+[scripts]
+test = "pytest"
