@@ -32,10 +32,10 @@ actions:
       - type: string
         name: test_file
 
-      - type: string[]
+      - type: string
         name: unuseful_columns
     output:
-      - type: string[]
+      - type: string
         name: output
 
   'transform_fields':
@@ -49,10 +49,10 @@ actions:
       - type: string
         name: test_file
 
-      - type: string[]
+      - type: string
         name: fields_to_transform
     output:
-      - type: string[]
+      - type: string
         name: output
 
   'train_and_predict':
@@ -69,7 +69,7 @@ actions:
       - type: string
         name: field_to_predict
 
-      - type: string[]
+      - type: string
         name: fields_to_use
     output:
       - type: real
