@@ -3,6 +3,7 @@
 The following repository contains the implementation of a **data processing package in brane** for Data Science tasks on a Kaggle competition dataset related to the sinking of the Titanic. This project correspond to Assignment 4.b of the Web Services and Cloud Based Systems at University of Amsterdam (G9).
 
 ## The Package (`titanicprocessing`)
+The package uses Python 3.8 as programming language for this task. In addition to this, it uses Pandas to manage the datasets and scikit-learn for the Machine Learning task. 
 The package definition is inside the `container.yml` file in the root of this repository. The package includes the train and testing datasets in the root of the package. This package is composed of three methods that can be used as building blocks in any [BraneScript](https://wiki.enablingpersonalizedinterventions.nl/user-guide/branescript/introduction.html) pipeline. 
 - Drop Unuseful Columns 
 - Transform Features

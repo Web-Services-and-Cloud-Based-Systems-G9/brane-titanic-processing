@@ -3,6 +3,7 @@ import os
 import sys
 import yaml
 from sklearn.tree import DecisionTreeClassifier
+from sklearn.ensemble import RandomForestClassifier
 from typing import List, Tuple
 import pandas as pd
 import numpy as np
@@ -23,8 +24,11 @@ def write_datasets(train: pd.DataFrame, test: pd.DataFrame, train_fn: str, test_
 
 
 def get_file_names(train: str, test: str) -> Tuple[str, str]:
-    new_train_fn = str(uuid.uuid4()) + ".csv"
-    new_test_fn = str(uuid.uuid4()) + ".csv"
+    prefix = "/data/"
+    if "TESTING" in os.environ and os.environ['TESTING'] == "1":
+        prefix = ""
+    new_train_fn = prefix + str(uuid.uuid4()) + ".csv"
+    new_test_fn = prefix + str(uuid.uuid4()) + ".csv"
     return new_train_fn, new_test_fn
 
 
@@ -74,18 +78,33 @@ def transform_fields(train_file: str, test_file: str, fields_to_transform: List[
     return output_train, output_test
 
 
-def train_and_predict(train_file: str, test_file: str, field_to_predict: str, fields_to_use: List[str]) -> Tuple[float, List[int]]:
+def train_and_predict(train_file: str, test_file: str, field_to_predict: str, fields_to_use: List[str], algorithm: str) -> str:
     train, test = read_datasets(train_file, test_file)
     Y_train = train[field_to_predict]
     X_train = train.drop(field_to_predict, axis=1)
-    X_train = X_train[fields_to_use]
-    X_test = test[fields_to_use].copy()
-    decision_tree = DecisionTreeClassifier()
-    decision_tree.fit(X_train, Y_train)
-    Y_pred = decision_tree.predict(X_test)
-    acc_decision_tree = round(decision_tree.score(X_train, Y_train) * 100, 2)
+    if fields_to_use is None:
+        X_test = test.copy()
+    else:
+        X_train = X_train[fields_to_use]
+        X_test = test[fields_to_use].copy()
+    if algorithm == "decision_tree":
+        model_used = DecisionTreeClassifier()
+    else:
+        model_used = RandomForestClassifier(n_estimators=100)
+    model_used.fit(X_train, Y_train)
+    Y_pred = model_used.predict(X_test)
+    acc_decision_tree = round(model_used.score(X_train, Y_train) * 100, 2)
     # print("Training Accuracy: {}%".format(acc_decision_tree))
-    return float(acc_decision_tree) #, Y_pred
+
+    prefix = "/data/"
+    if "TESTING" in os.environ and os.environ['TESTING'] == "1":
+        prefix = ""
+    prediction_file = prefix + str(uuid.uuid4()) + ".csv"
+    with open(prediction_file, 'w') as f:
+        f.write("%s\n" % acc_decision_tree)
+        for item in Y_pred:
+            f.write("%s\n" % item)
+    return str(prediction_file) #, Y_pred
 
 
 def drop_unuseful_columns_wrapper():
@@ -95,6 +114,16 @@ def drop_unuseful_columns_wrapper():
         os.environ[f"UNUSEFUL_COLUMNS{i}"] for i in range(int(os.environ["UNUSEFUL_COLUMNS"]))
     ]
     output = drop_unuseful_columns(arg_train_file, arg_test_file, arg_unuseful_columns)
+    yaml_result = yaml.dump({"output": list(output)})
+    print(yaml_result)
+    return yaml_result
+
+
+def drop_unuseful_column_wrapper():
+    arg_train_file = os.environ["TRAIN_FILE"]
+    arg_test_file = os.environ["TEST_FILE"]
+    arg_unuseful_column = os.environ["UNUSEFUL_COLUMN"]
+    output = drop_unuseful_columns(arg_train_file, arg_test_file, [arg_unuseful_column])
     yaml_result = yaml.dump({"output": list(output)})
     print(yaml_result)
     return yaml_result
@@ -112,14 +141,37 @@ def transform_fields_wrapper():
     return yaml_result
 
 
+def transform_field_wrapper():
+    arg_train_file = os.environ["TRAIN_FILE"]
+    arg_test_file = os.environ["TEST_FILE"]
+    arg_field_to_transform = os.environ["FIELD_TO_TRANSFORM"]
+    output = transform_fields(arg_train_file, arg_test_file, [arg_field_to_transform])
+    yaml_result = yaml.dump({"output": list(output)})
+    print(yaml_result)
+    return yaml_result
+
+
 def train_and_predict_wrapper():
     arg_train_file = os.environ["TRAIN_FILE"]
     arg_test_file = os.environ["TEST_FILE"]
+    arg_algorithm = os.environ["ALGORITHM"]
     arg_field_to_predict = os.environ["FIELD_TO_PREDICT"]
     arg_fields_to_use = [
         os.environ[f"FIELDS_TO_USE{i}"] for i in range(int(os.environ["FIELDS_TO_USE"]))
     ]
-    output = train_and_predict(arg_train_file, arg_test_file, arg_field_to_predict, arg_fields_to_use)
+    output = train_and_predict(arg_train_file, arg_test_file, arg_field_to_predict, arg_fields_to_use, arg_algorithm)
+    yaml_result = yaml.dump({"output": output})
+    print(yaml_result)
+    return yaml_result
+
+
+def train_and_predict_all_wrapper():
+    arg_train_file = os.environ["TRAIN_FILE"]
+    arg_test_file = os.environ["TEST_FILE"]
+    arg_field_to_predict = os.environ["FIELD_TO_PREDICT"]
+    arg_algorithm = os.environ["ALGORITHM"]
+    arg_fields_to_use = None
+    output = train_and_predict(arg_train_file, arg_test_file, arg_field_to_predict, arg_fields_to_use, arg_algorithm)
     yaml_result = yaml.dump({"output": output})
     print(yaml_result)
     return yaml_result
@@ -131,8 +183,17 @@ if __name__ == "__main__":
     if command == "drop_unuseful_columns":
         drop_unuseful_columns_wrapper()
 
+    if command == "drop_unuseful_column":  # workaround for arrays issues
+        drop_unuseful_column_wrapper()
+
     elif command == "transform_fields":
         transform_fields_wrapper()
 
+    elif command == "transform_field":  # workaround for arrays issues
+        transform_field_wrapper()
+
     elif command == "train_and_predict":
         train_and_predict_wrapper()
+
+    elif command == "train_and_predict_all":  # workaround for arrays issues
+        train_and_predict_all_wrapper()

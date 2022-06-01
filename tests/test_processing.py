@@ -10,6 +10,7 @@ TEST_PATH = os.path.join(ROOT_DIR, 'test.csv')
 
 
 def test_processing_pipeline():
+    os.environ["TESTING"] = "1"
     os.environ["TRAIN_FILE"] = TRAIN_PATH
     os.environ["TEST_FILE"] = TEST_PATH
 
@@ -26,6 +27,7 @@ def test_processing_pipeline():
     os.environ["FIELDS_TO_TRANSFORM3"] = "Fsize"
 
     os.environ["FIELD_TO_PREDICT"] = 'Survived'
+    os.environ["ALGORITHM"] = 'decision_tree'
     os.environ["FIELDS_TO_USE"] = "6"
     os.environ["FIELDS_TO_USE0"] = "Pclass"
     os.environ["FIELDS_TO_USE1"] = "Sex"
@@ -58,6 +60,7 @@ def test_processing_pipeline():
 
 
 def test_transform_fields_wrapper():
+    os.environ["TESTING"] = "1"
     os.environ["TRAIN_FILE"] = TRAIN_PATH
     os.environ["TEST_FILE"] = TEST_PATH
     os.environ["FIELDS_TO_TRANSFORM"] = "4"
@@ -87,6 +90,7 @@ def test_transform_fields_wrapper():
 
 
 def test_drop_unuseful_columns_wrapper():
+    os.environ["TESTING"] = "1"
     os.environ["TRAIN_FILE"] = TRAIN_PATH
     os.environ["TEST_FILE"] = TEST_PATH
     os.environ["UNUSEFUL_COLUMNS"] = "4"
