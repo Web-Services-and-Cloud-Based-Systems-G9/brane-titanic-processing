@@ -124,6 +124,9 @@ actions:
         name: test_file
 
       - type: string
+        name: field_to_use
+
+      - type: string
         name: algorithm
 
       - type: string
