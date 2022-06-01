@@ -75,7 +75,7 @@ actions:
   'transform_field':
     command:
       args:
-        - transform_fields
+        - transform_field
     input:
       - type: string
         name: train_file
@@ -115,7 +115,7 @@ actions:
   'train_and_predict_all':
     command:
       args:
-        - train_and_predict
+        - train_and_predict_all
     input:
       - type: string
         name: train_file
