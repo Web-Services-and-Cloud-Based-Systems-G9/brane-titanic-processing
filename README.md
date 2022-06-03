@@ -79,7 +79,7 @@ drop_unuseful_columns(train, test, unuseful_columns);
 let fields_to_transform := "Age,Sex,Embarked,Fsize";
 transform_fields(train, test, fields_to_transform);
 
-// Make a prediction based only on "age" column
+// Make a prediction
 let train := "/data/c4c6ca4f-3fb3-4d6d-80d0-9f19ea3903d8.csv"; // Using the new generated file for training
 let test := "/data/6e716482-6080-457f-892d-e2cfff853490.csv"; // Using the new generated file for testing
 let field_to_predict := "Survived";
