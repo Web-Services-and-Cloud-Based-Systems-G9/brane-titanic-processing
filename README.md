@@ -13,7 +13,7 @@ The package definition is inside the `container.yml` file in the root of this re
 ### Drop Unuseful Columns 
 
 - **Method Global Name**: `drop_unuseful_columns` 
-- **Description**: This method loads the given `train_file` and `test_file` into two Pandas dataframes and drop the columns given in the `unuseful_columns` list and stores these dataframes into new .csv files. The method returns a list of two strings containing the file names of the both new .csv files. The new file names are generated using UUID4 and they are stored on the `/data` directory.
+- **Description**: This method loads the given `train_file` and `test_file` into two Pandas dataframes and drop the columns given in the `unuseful_columns` list and stores these dataframes into new .csv files. The method returns a list of two strings containing the file names of the both new .csv files. The new file names are generated using UUID4 and they are stored on the `/data` directory. The idea is to use these new file names in further method calls.
 - **INPUT**: 
   - `train_file`(str): File name of the train data to use. On first instance, you only have `'train.csv'` and `'test.csv'` to use. 
   - `test_file`(str): File name of the test data to use. On first instance, you only have `'train.csv'` and `'test.csv'` to use.   
@@ -23,7 +23,7 @@ The package definition is inside the `container.yml` file in the root of this re
 
 ### Transform Features
 - **Method Global Name**: `transform_fields` 
-- **Description**: This method loads the given `train_file` and `test_file` into two Pandas dataframes and transform the columns given in the `fields_to_transform` list and stores these dataframes into new .csv files. The method returns a list of two strings containing the file names of the both new .csv files. The new file names are generated using UUID4 and they are stored on the `/data` directory.
+- **Description**: This method loads the given `train_file` and `test_file` into two Pandas dataframes and transform the columns given in the `fields_to_transform` list and stores these dataframes into new .csv files. The method returns a list of two strings containing the file names of the both new .csv files. The new file names are generated using UUID4 and they are stored on the `/data` directory. The idea is to use these new file names in further method calls.
 - **INPUT**: 
   - `train_file`(str): File name of the train data to use. On first instance, you only have `'train.csv'` and `'test.csv'` to use. 
   - `test_file`(str): File name of the test data to use. On first instance, you only have `'train.csv'` and `'test.csv'` to use.  
@@ -68,7 +68,7 @@ This repository a **GitHub Action** workflows configured that runs automated tes
 Once you have build the package with Brane, you can use the following examples to try the package. 
 
 ```js
-import titanicviz;
+import titanicprocessing;
 
 // Remove unuseful columns
 let unuseful_columns := "Cabin,Name,Ticket,PassengerId";
@@ -76,6 +76,17 @@ let train := "train.csv";
 let test := "test.csv";
 drop_unuseful_columns(train, test, unuseful_columns);
 
-// Files are stored inside the /data directory
+let fields_to_transform := "Age,Sex,Embarked,Fsize";
+transform_fields(train, test, fields_to_transform);
 
+// Make a prediction based only on "age" column
+let train := "/data/c4c6ca4f-3fb3-4d6d-80d0-9f19ea3903d8.csv"; // Using the new generated file for training
+let test := "/data/6e716482-6080-457f-892d-e2cfff853490.csv"; // Using the new generated file for testing
+let field_to_predict := "Survived";
+let fields_to_use := "Pclass,Sex,Age,Embarked,Fsize";
+let algorithm := "decision_tree"
+train_and_predict(train, test, field_to_predict, algorithm, fields_to_use);
+
+// Files are stored inside the /data directory
 ```
+
