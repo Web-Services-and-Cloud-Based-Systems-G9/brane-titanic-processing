@@ -34,14 +34,14 @@ The package definition is inside the `container.yml` file in the root of this re
 
 ### Train and Predict
 - **Method Global Name**: `train_and_predict` 
-- **Description**: This method loads the given `train_file` and `test_file` into two Pandas dataframes. Next, using the fields on `fields_to_use`, fits a Decision Tree Classifier to predict the values on `field_to_predict`. Finally, using the fitted model, predictions are made for the test set. The method returns the name of the file that was generated with the output predictions stored on the `/data` directory.
+- **Description**: This method loads the given `train_file` and `test_file` into two Pandas dataframes. Next, using the fields on `fields_to_use`, fits a Decision Tree Classifier to predict the values on `field_to_predict`. Finally, using the fitted model, predictions are made for the test set. The method returns the name of the file that was generated with the output predictions stored on the `/data` directory. The first line of the output file is the accuracy on the training set.
 - **INPUT**: 
   - `train_file`(str): File name of the train data to use. On first instance, you only have `'train.csv'` and `'test.csv'` to use. 
   - `test_file`(str): File name of the test data to use. On first instance, you only have `'train.csv'` and `'test.csv'` to use.  
   - `fields_to_use`(str): List of the names of the columns to use for the training. Must be a string separated by commas.
   - `field_to_predict`(str): Name of the column with the field to use as response (i.e. the feature to predict).
 - **OUTPUT**:
-  - `output`(str): Name of the file that was generated with the output predictions.
+  - `output`(str): Name of the file that was generated with the output predictions. The first line of the file is the accuracy on the training set.
 
 
 ## Unit Tests (locally)
