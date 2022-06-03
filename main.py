@@ -104,27 +104,16 @@ def train_and_predict(train_file: str, test_file: str, field_to_predict: str, fi
         f.write("%s\n" % acc_decision_tree)
         for item in Y_pred:
             f.write("%s\n" % item)
-    return str(prediction_file) #, Y_pred
+    return str(prediction_file)
 
 
 def drop_unuseful_columns_wrapper():
     arg_train_file = os.environ["TRAIN_FILE"]
     arg_test_file = os.environ["TEST_FILE"]
-    arg_unuseful_columns = [
-        os.environ[f"UNUSEFUL_COLUMNS{i}"] for i in range(int(os.environ["UNUSEFUL_COLUMNS"]))
-    ]
+    arg_unuseful_columns = os.environ["UNUSEFUL_COLUMNS"].split(',')
     output = drop_unuseful_columns(arg_train_file, arg_test_file, arg_unuseful_columns)
-    yaml_result = yaml.dump({"output": list(output)})
-    print(yaml_result)
-    return yaml_result
-
-
-def drop_unuseful_column_wrapper():
-    arg_train_file = os.environ["TRAIN_FILE"]
-    arg_test_file = os.environ["TEST_FILE"]
-    arg_unuseful_column = os.environ["UNUSEFUL_COLUMN"].split(',')
-    output = drop_unuseful_columns(arg_train_file, arg_test_file, arg_unuseful_column)
-    yaml_result = yaml.dump({"output": list(output)})
+    output = ",".join(output)
+    yaml_result = yaml.dump({"output": output})
     print(yaml_result)
     return yaml_result
 
@@ -132,21 +121,10 @@ def drop_unuseful_column_wrapper():
 def transform_fields_wrapper():
     arg_train_file = os.environ["TRAIN_FILE"]
     arg_test_file = os.environ["TEST_FILE"]
-    arg_fields_to_transform = [
-        os.environ[f"FIELDS_TO_TRANSFORM{i}"] for i in range(int(os.environ["FIELDS_TO_TRANSFORM"]))
-    ]
+    arg_fields_to_transform = os.environ["FIELDS_TO_TRANSFORM"].split(',')
     output = transform_fields(arg_train_file, arg_test_file, arg_fields_to_transform)
-    yaml_result = yaml.dump({"output": list(output)})
-    print(yaml_result)
-    return yaml_result
-
-
-def transform_field_wrapper():
-    arg_train_file = os.environ["TRAIN_FILE"]
-    arg_test_file = os.environ["TEST_FILE"]
-    arg_field_to_transform = os.environ["FIELD_TO_TRANSFORM"].split(',')
-    output = transform_fields(arg_train_file, arg_test_file, arg_field_to_transform)
-    yaml_result = yaml.dump({"output": list(output)})
+    output = ",".join(output)
+    yaml_result = yaml.dump({"output": output})
     print(yaml_result)
     return yaml_result
 
@@ -156,21 +134,7 @@ def train_and_predict_wrapper():
     arg_test_file = os.environ["TEST_FILE"]
     arg_algorithm = os.environ["ALGORITHM"]
     arg_field_to_predict = os.environ["FIELD_TO_PREDICT"]
-    arg_fields_to_use = [
-        os.environ[f"FIELDS_TO_USE{i}"] for i in range(int(os.environ["FIELDS_TO_USE"]))
-    ]
-    output = train_and_predict(arg_train_file, arg_test_file, arg_field_to_predict, arg_fields_to_use, arg_algorithm)
-    yaml_result = yaml.dump({"output": output})
-    print(yaml_result)
-    return yaml_result
-
-
-def train_and_predict_all_wrapper():
-    arg_train_file = os.environ["TRAIN_FILE"]
-    arg_test_file = os.environ["TEST_FILE"]
-    arg_field_to_predict = os.environ["FIELD_TO_PREDICT"]
-    arg_algorithm = os.environ["ALGORITHM"]
-    arg_fields_to_use = os.environ["FIELD_TO_USE"].split(',')
+    arg_fields_to_use = os.environ["FIELDS_TO_USE"].split(',')
     output = train_and_predict(arg_train_file, arg_test_file, arg_field_to_predict, arg_fields_to_use, arg_algorithm)
     yaml_result = yaml.dump({"output": output})
     print(yaml_result)
@@ -183,17 +147,8 @@ if __name__ == "__main__":
     if command == "drop_unuseful_columns":
         drop_unuseful_columns_wrapper()
 
-    if command == "drop_unuseful_column":  # workaround for arrays issues
-        drop_unuseful_column_wrapper()
-
     elif command == "transform_fields":
         transform_fields_wrapper()
 
-    elif command == "transform_field":  # workaround for arrays issues
-        transform_field_wrapper()
-
     elif command == "train_and_predict":
         train_and_predict_wrapper()
-
-    elif command == "train_and_predict_all":  # workaround for arrays issues
-        train_and_predict_all_wrapper()

@@ -32,27 +32,10 @@ actions:
       - type: string
         name: test_file
 
-      - type: string[]
+      - type: string
         name: unuseful_columns
     output:
-      - type: string[]
-        name: output
-
-  'drop_unuseful_column':
-    command:
-      args:
-        - drop_unuseful_column
-    input:
       - type: string
-        name: train_file
-
-      - type: string
-        name: test_file
-
-      - type: string
-        name: unuseful_column
-    output:
-      - type: string[]
         name: output
 
   'transform_fields':
@@ -66,27 +49,10 @@ actions:
       - type: string
         name: test_file
 
-      - type: string[]
+      - type: string
         name: fields_to_transform
     output:
-      - type: string[]
-        name: output
-
-  'transform_field':
-    command:
-      args:
-        - transform_field
-    input:
       - type: string
-        name: train_file
-
-      - type: string
-        name: test_file
-
-      - type: string
-        name: field_to_transform
-    output:
-      - type: string[]
         name: output
 
   'train_and_predict':
@@ -106,32 +72,9 @@ actions:
       - type: string
         name: algorithm
 
-      - type: string[]
+      - type: string
         name: fields_to_use
     output:
       - type: string
         name: output
 
-  'train_and_predict_all':
-    command:
-      args:
-        - train_and_predict_all
-    input:
-      - type: string
-        name: train_file
-
-      - type: string
-        name: test_file
-
-      - type: string
-        name: field_to_use
-
-      - type: string
-        name: algorithm
-
-      - type: string
-        name: field_to_predict
-
-    output:
-      - type: string
-        name: output
